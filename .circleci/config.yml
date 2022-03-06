@@ -1,20 +1,15 @@
 version: 2.1
 
-orbs:
-  architect: giantswarm/architect@4.13.0
+jobs:
+  build:
+    docker:
+      - image: quay.io/helmpack/chart-testing:latest
+    steps:
+      - checkout
+      - run:
+          name: lint
+          command: |
+            git remote add k8s $CIRCLE_REPOSITORY_URL
+            git fetch k8s $CIRCLE_BRANCH
+            ct lint --config .circleci/chart-testing.yaml
 
-workflows:
-  version: 2
-  build-and-push:
-    jobs:
-      - architect/push-to-app-catalog:
-          context: "architect"
-          executor: "app-build-suite"
-          name: "package and push chart to app catalog"
-          app_catalog: "giantswarm-catalog"
-          app_catalog_test: "giantswarm-test-catalog"
-          chart: "hello-world-app"
-          # Trigger job on git tag.
-          filters:
-            tags:
-              only: /^v.*/
