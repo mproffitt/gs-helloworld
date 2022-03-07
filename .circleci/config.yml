@@ -49,7 +49,6 @@ jobs:
           severity-threshold: high
           command: iac test ./output
 
-
   run_performance_tests:
     <<: *defaults
     machine: true
@@ -66,10 +65,10 @@ workflows:
   weekly:
     triggers:
       - schedule:
-          cron: "0 9 * * 1"
+          cron: "15 11 * * 1"
           filters:
             branches:
               only:
-                - main
+                - master
     jobs:
       - run_performance_tests
