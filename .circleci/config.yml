@@ -38,8 +38,10 @@ jobs:
           name: helm-template
           command: helm template ./helm/hello-world-app --output-dir ./output
       - snyk/scan:
-          name: snyk-iac
-          command: snyk iac test ./output
+          fail-on-issues: true
+          monitor-on-build: true
+          severity-threshold: medium
+          command: iac test ./output
 
 
   run_performance_tests:
