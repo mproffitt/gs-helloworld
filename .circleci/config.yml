@@ -45,7 +45,7 @@ jobs:
           command: helm template ./helm/hello-world-app --output-dir ./output
       - snyk/scan:
           fail-on-issues: true
-          monitor-on-build: true
+          #monitor-on-build: true
           severity-threshold: high
           command: iac test ./output
 
