@@ -69,6 +69,6 @@ workflows:
           filters:
             branches:
               only:
-                - main
+                - master
     jobs:
       - run_performance_tests
