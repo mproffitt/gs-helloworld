@@ -35,6 +35,9 @@ jobs:
     resource_class: medium
     steps:
       - checkout
+      - run:
+          name: install curl
+          command: apk update && apk add curl
       - helm/install-helm-client:
           version: v3.7.0
       - run:
