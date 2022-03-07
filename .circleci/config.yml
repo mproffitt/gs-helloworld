@@ -51,6 +51,10 @@ jobs:
 
 workflows:
   version: 2
+  build:
+    jobs:
+      - build
+      - scan-iac
   weekly:
     triggers:
       - schedule:
