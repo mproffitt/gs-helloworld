@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   snyk: snyk/snyk@1.1.2
+  helm: circleci/helm@1.2.0
 
 default: &defaults
   parallelism: 1
@@ -34,6 +35,11 @@ jobs:
     resource_class: medium
     steps:
       - checkout
+      - run:
+          name: install curl
+          command: apt update && apt install -y curl
+      - helm/install-helm-client:
+          version: v3.7.0
       - run:
           name: helm-template
           command: helm template ./helm/hello-world-app --output-dir ./output
