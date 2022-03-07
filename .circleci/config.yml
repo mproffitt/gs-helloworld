@@ -1,5 +1,20 @@
 version: 2.1
 
+orbs:
+  snyk: snyk/snyk@1.1.2
+
+default: &defaults
+  parallelism: 1
+  working_directory: ~/$CIRCLE_PROJECT_REPONAME
+
+k6_performance_tests: &k6_performance_tests
+  run:
+    name: Running k6 tests
+    command: |
+      docker pull loadimpact/k6:latest
+      docker run -i -e K6_CLOUD_TOKEN=$K6_CLOUD_TOKEN -e K6_CLOUD_PROJECT_ID=$K6_CLOUD_PROJECT_ID -v $HOME/$CIRCLE_PROJECT_REPONAME:/ci/ loadimpact/k6:latest cloud /ci/loadtests/performance-test.js
+
+
 jobs:
   build:
     docker:
@@ -13,3 +28,36 @@ jobs:
             git fetch k8s $CIRCLE_BRANCH
             ct lint --config .circleci/chart-testing.yaml
 
+  scan-iac:
+    docker:
+      - image: 'snyk/snyk-cli:npm'
+    resource_class: medium
+    steps:
+      - checkout
+      - run:
+          name: helm-template
+          command: helm template ./helm/hello-world-app --output-dir ./output
+      - snyk/scan:
+          name: snyk-iac
+          command: snyk iac test ./output
+
+
+  run_performance_tests:
+    <<: *defaults
+    machine: true
+    steps:
+      - checkout
+      - *k6_performance_tests
+
+workflows:
+  version: 2
+  weekly:
+    triggers:
+      - schedule:
+          cron: "0 9 * * 1"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - run_performance_tests
