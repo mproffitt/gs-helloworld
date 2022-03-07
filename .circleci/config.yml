@@ -46,7 +46,7 @@ jobs:
       - snyk/scan:
           fail-on-issues: true
           monitor-on-build: true
-          severity-threshold: medium
+          severity-threshold: high
           command: iac test ./output
 
 
