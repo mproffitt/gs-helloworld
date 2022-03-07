@@ -37,7 +37,7 @@ jobs:
       - checkout
       - run:
           name: install curl
-          command: apt update && apt install curl
+          command: apt update && apt install -y curl
       - helm/install-helm-client:
           version: v3.7.0
       - run:
